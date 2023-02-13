@@ -15,7 +15,7 @@ var defaultZero = document.getElementById("default");
 var operators = document.querySelectorAll("#operator");
 
 // numbers
-var currentNumber = document.querySelectorAll("#number");
+var previousNumber = document.querySelectorAll("#number");
 
 // equal
 var equal = document.querySelector("#equal");
@@ -29,8 +29,9 @@ var percentage = document.getElementById("percentage");
 
 // eventListeners |||||
 
-currentNumber.forEach((number) => {
+previousNumber.forEach((number) => {
   number.addEventListener("click", () => {
+    defaultZero.classList.add("default");
     deactivate();
     updateNumber(number.value);
     displayNumber();
@@ -51,7 +52,6 @@ equal.addEventListener("click", () => {
 
 allClear.addEventListener("click", () => {
   cleaAll();
-  clear();
 });
 
 plusMinus.addEventListener("click", () => {
@@ -69,8 +69,6 @@ percentage.addEventListener("click", () => {
 var firstOperand = "";
 var secondOperand = "";
 var theOperator = "";
-var resultCalcution;
-calculatorDisplay.innerText = "0";
 // functions|||||||
 
 // allClear && clear
@@ -78,35 +76,23 @@ function cleaAll() {
   firstOperand = "";
   secondOperand = "";
   theOperator = "";
-  calculatorDisplay.innerText = "0";
-  console.clear();
+  allClear.value = "AC";
+  calculatorDisplay.innerText = "";
+  defaultZero.classList.remove("default");
   deactivate();
+  console.clear();
 }
 
-function clear() {
-  // it clears one value at a time
-  if (firstOperand != "") {
-    allClear.value = "C";
-    firstOperand = "";
-  }
-  if (theOperator != "") {
-    allClear.value = "C";
-    theOperator = "";
-  }
-  if (secondOperand != "") {
-    allClear.value = "C";
-    secondOperand = "";
-  }
-}
-
-// appendMinus(it add a minus infront of the current number when clicked)
+// appendMinus(it add a minus infront of the previous number when clicked)
 function appendMinus() {
   firstOperand = "-" + firstOperand;
+  calculatorDisplay.innerText = "0";
   displayNumber();
 }
 
-// update current and previous number after each buttonclick
+// update previous and current number after each buttonclick
 function updateNumber(number) {
+  allClear.value = "C";
   if ((number === ".") & firstOperand.includes(".")) return;
   if (firstOperand < 1) {
     if (number === "0" && firstOperand.includes("0")) return;
@@ -124,30 +110,22 @@ function displayNumber() {
 function whichOperation(op) {
   if (firstOperand === "") return;
   if ((firstOperand != "") & (secondOperand != "")) {
-    // if a new operator is press for a new op this will run and the last if statement in this function will store a new operator(the one press to further the calculations)
+    // if a new operator is press for a new op this will run.
     calculate();
     displayResult();
-  } else {
-    // if equal is press this will run
-    theOperator = op.value;
-    secondOperand = firstOperand;
-    firstOperand = "";
-    console.log("eq",theOperator);
   }
-
-  // this stores new operator for new calculation
-  if ((firstOperand != undefined) & (theOperator === "")) {
-    theOperator = op.value;
-    secondOperand = firstOperand;
-    firstOperand = "";
-    console.log("resetop",theOperator);
-  }
+  // if equal is press this will run
+  theOperator = op.value;
+  secondOperand = firstOperand;
+  firstOperand = "";
+  console.log("eq", theOperator);
 }
 
 // does the calculations
 function calculate() {
-  const previous = parseFloat(firstOperand);
-  const current = parseFloat(secondOperand);
+  let resultCalcution;
+  const current = parseFloat(firstOperand);
+  const previous = parseFloat(secondOperand);
 
   if ((firstOperand === "") & (secondOperand === "") & (theOperator === ""))
     return;
@@ -156,16 +134,16 @@ function calculate() {
 
   if ((firstOperand != "") & (secondOperand != "") & (theOperator != "")) {
     if (theOperator === "+") {
-      resultCalcution = current + previous;
+      resultCalcution = previous + current;
     }
     if (theOperator === "-") {
-      resultCalcution = current - previous;
+      resultCalcution = previous - current;
     }
     if (theOperator === "X") {
-      resultCalcution = current * previous;
+      resultCalcution = previous * current;
     }
     if (theOperator === "÷") {
-      resultCalcution = current / previous;
+      resultCalcution = previous / current;
     }
   }
   firstOperand = resultCalcution;
@@ -175,7 +153,7 @@ function calculate() {
 
 // display result
 function displayResult() {
-  if (firstOperand === "") return;
+  if (firstOperand === "" || firstOperand === undefined) return;
   console.log(firstOperand, theOperator, secondOperand);
 
   calculatorDisplay.innerHTML = firstOperand;
@@ -187,7 +165,7 @@ function active(op) {
     // adds operator style
     op.classList.toggle("active");
 
-    // remove operator style from previous operators to new operator.
+    // remove operator style from current operators to new operator.
     for (var i = 0; i < operators.length; i++) {
       if (operators[i].classList.contains("active") && operators[i] != op) {
         operators[i].classList.remove("active");
