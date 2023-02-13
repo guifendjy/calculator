@@ -45,12 +45,13 @@ operators.forEach((op) => {
 });
 
 equal.addEventListener("click", () => {
-  // calculate();
+  calculate();
   displayResult();
 });
 
 allClear.addEventListener("click", () => {
   cleaAll();
+  clear();
 });
 
 plusMinus.addEventListener("click", () => {
@@ -69,6 +70,7 @@ var firstOperand = "";
 var secondOperand = "";
 var theOperator = "";
 var resultCalcution;
+calculatorDisplay.innerText = "0";
 // functions|||||||
 
 // allClear && clear
@@ -76,15 +78,26 @@ function cleaAll() {
   firstOperand = "";
   secondOperand = "";
   theOperator = "";
-  defaultZero.classList.remove("default");
-  calculatorDisplay.innerText = "";
+  calculatorDisplay.innerText = "0";
   console.clear();
   deactivate();
 }
 
-// function clear() {
-//   allClear.value = "C";
-// }
+function clear() {
+  // it clears one value at a time
+  if (firstOperand != "") {
+    allClear.value = "C";
+    firstOperand = "";
+  }
+  if (theOperator != "") {
+    allClear.value = "C";
+    theOperator = "";
+  }
+  if (secondOperand != "") {
+    allClear.value = "C";
+    secondOperand = "";
+  }
+}
 
 // appendMinus(it add a minus infront of the current number when clicked)
 function appendMinus() {
@@ -94,7 +107,6 @@ function appendMinus() {
 
 // update current and previous number after each buttonclick
 function updateNumber(number) {
-  defaultZero.classList.add("default");
   if ((number === ".") & firstOperand.includes(".")) return;
   if (firstOperand < 1) {
     if (number === "0" && firstOperand.includes("0")) return;
@@ -164,8 +176,6 @@ function calculate() {
 // display result
 function displayResult() {
   if (firstOperand === "") return;
-  // if (secondOperand === "") return;
-  calculate();
   console.log(firstOperand, theOperator, secondOperand);
 
   calculatorDisplay.innerHTML = firstOperand;
@@ -187,7 +197,7 @@ function active(op) {
   return;
 }
 
-// remove operator style after i's been stored
+// remove operator style after it's been stored
 function deactivate() {
   //  operator to default style
   for (var i = 0; i < operators.length; i++) {

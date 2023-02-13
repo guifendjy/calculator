@@ -79,9 +79,6 @@ body {
 }
 
 /* js linked styles */
-.default {
-  display: none;
-}
 
 #operator.active {
   background-color: #fff;
